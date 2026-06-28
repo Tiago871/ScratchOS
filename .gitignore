@@ -1,0 +1,23 @@
+# Build
+build/
+output/
+
+# ISO Images
+*.iso
+
+# Binary Files
+*.bin
+*.o
+*.elf
+*.img
+
+# Debug
+*.log
+
+# VSCode
+.vscode/*.log
+
+# Temporary
+*.tmp
+*.bak
+*.swp
