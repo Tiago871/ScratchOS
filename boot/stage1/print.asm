@@ -29,8 +29,7 @@ ScrBootPrintString:
     cmp al,0
     je .done
 
-    mov ah,0x0E
-    int 0x10
+    call ScrBiosPrintChar
 
     jmp .next
 

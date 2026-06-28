@@ -1,6 +1,7 @@
 BITS 16
 ORG 0x7C00
 
+%include "bios.asm"
 %include "print.asm"
 %include "banner.asm"
 
