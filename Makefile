@@ -22,10 +22,10 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 $(STAGE1_BIN): $(STAGE1_SRC) | $(BUILD_DIR)
-	$(ASM) -f bin $(STAGE1_SRC) -o $(STAGE1_BIN)
+	$(ASM) -I boot/stage1/ -f bin $(STAGE1_SRC) -o $(STAGE1_BIN)
 
 $(STAGE2_BIN): $(STAGE2_SRC) | $(BUILD_DIR)
-	$(ASM) -f bin $(STAGE2_SRC) -o $(STAGE2_BIN)
+	$(ASM) -I boot/stage2/ -f bin $(STAGE2_SRC) -o $(STAGE2_BIN)
 
 $(IMAGE): $(STAGE1_BIN) $(STAGE2_BIN)
 	cp $(STAGE1_BIN) $(IMAGE)
@@ -35,4 +35,4 @@ run: $(IMAGE)
 	$(QEMU) -drive format=raw,file=$(IMAGE)
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -f $(BUILD_DIR)/*
