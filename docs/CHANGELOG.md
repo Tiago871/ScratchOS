@@ -99,5 +99,72 @@ Planned:
 
 ---
 
-Version: 0.1.0
+
+
+
+
+
+
+Version: 0.1.5
 Status: Development
+
+# Changelog
+
+## [Unreleased] — 2026-06-29
+
+### Added
+
+* Added automatic build support for both ScratchBoot stages:
+
+  * `boot.bin` for Stage1
+  * `stage2.bin` for Stage2
+  * `scratchos.img` as the bootable raw disk image
+* Added NASM include paths to the build process for:
+
+  * `boot/stage1/`
+  * `boot/stage2/`
+* Added a two-sector boot image layout:
+
+  * Sector 1: Stage1 boot sector
+  * Sector 2: Stage2 loader
+* Added Stage1 support for loading Stage2 from disk through BIOS `INT 13h`.
+* Added a jump from Stage1 to Stage2 at address `0000:7E00`.
+* Added an on-screen Stage1 disk-read error message.
+* Added independent Stage2 initialization:
+
+  * `DS`, `ES`, and `SS` set to `0`
+  * Stage2 stack initialized at `0000:7A00`
+  * Direction flag cleared with `CLD`
+* Added BIOS E820 memory-map support in Stage2.
+* Added storage for E820 memory-map entries in low memory at `0000:0500`.
+* Added a limit of 16 E820 memory-map entries to prevent accidental memory overwrites.
+* Added a build-time safety check that rejects Stage2 files larger than 512 bytes, because Stage1 currently loads one sector only.
+
+### Changed
+
+* Updated the build image process to pad `scratchos.img` to 1024 bytes.
+* Updated the `clean` target so it removes build files while preserving the `build/` directory.
+* Updated Stage1 so execution starts at the `start` label before included library code.
+* Updated Stage1 to initialize the real-mode environment before calling BIOS helper routines.
+
+### Verified
+
+* `make` successfully builds Stage1, Stage2, and the disk image.
+* `boot.bin` is exactly 512 bytes and contains a valid boot signature.
+* `scratchos.img` is padded to two full 512-byte sectors.
+* QEMU successfully boots ScratchOS.
+* Stage1 displays its banner.
+* Stage1 loads Stage2 from the second disk sector.
+* Stage2 starts successfully and displays its startup message.
+* BIOS E820 memory-map collection completes successfully in QEMU.
+
+### Known Issue
+
+* The E820 entry count is currently displayed as `?` instead of a decimal number.
+* The E820 memory-map collection itself completes successfully; the remaining issue is limited to displaying the entry count correctly.
+
+### Next Step
+
+* Verify and correct the decimal-number printing path used for `MemoryMapEntryCount`.
+* Display the actual number of E820 memory-map entries returned by BIOS.
+
