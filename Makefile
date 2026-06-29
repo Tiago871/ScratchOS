@@ -28,8 +28,8 @@ $(STAGE2_BIN): $(STAGE2_SRC) | $(BUILD_DIR)
 	$(ASM) -I boot/stage2/ -f bin $(STAGE2_SRC) -o $(STAGE2_BIN)
 
 $(IMAGE): $(STAGE1_BIN) $(STAGE2_BIN)
-	cp $(STAGE1_BIN) $(IMAGE)
-	cat $(STAGE2_BIN) >> $(IMAGE)
+	cat $(STAGE1_BIN) $(STAGE2_BIN) > $(IMAGE)
+	truncate -s 1024 $(IMAGE)
 
 run: $(IMAGE)
 	$(QEMU) -drive format=raw,file=$(IMAGE)
