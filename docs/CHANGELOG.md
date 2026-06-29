@@ -149,6 +149,8 @@ Status: Development
 
 ### Verified
 
+* BIOS E820 memory-map collection completed successfully in QEMU.
+* BIOS returned and ScratchOS counted 7 E820 memory-map entries.
 * `make` successfully builds Stage1, Stage2, and the disk image.
 * `boot.bin` is exactly 512 bytes and contains a valid boot signature.
 * `scratchos.img` is padded to two full 512-byte sectors.
@@ -160,8 +162,7 @@ Status: Development
 
 ### Known Issue
 
-* The E820 entry count is currently displayed as `?` instead of a decimal number.
-* The E820 memory-map collection itself completes successfully; the remaining issue is limited to displaying the entry count correctly.
+* There is currently no Known Issue
 
 ### Next Step
 
