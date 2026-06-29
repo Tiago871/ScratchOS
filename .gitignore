@@ -5,9 +5,9 @@ output/
 *.iso
 
 # Binary Files
+*.bin
 *.o
 *.elf
-*.img
 
 # Debug
 *.log
