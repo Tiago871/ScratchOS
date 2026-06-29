@@ -1,10 +1,12 @@
 # Build
+build/
 output/
 
 # ISO Images
 *.iso
 
 # Binary Files
+*.img
 *.bin
 *.o
 *.elf
