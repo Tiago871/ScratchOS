@@ -9,13 +9,26 @@ ORG 0x7E00
 
 Stage2Start:
 
-    ; TODO:
-    ; - Memory detection
-    ; - Enable A20
-    ; - Setup GDT
-    ; - Enter Protected Mode
+    mov si, Stage2Message
+
+.print:
+
+    lodsb
+    or al, al
+    jz .done
+
+    mov ah, 0x0E
+    int 0x10
+
+    jmp .print
+
+.done:
 
 .hang:
 
     hlt
     jmp .hang
+
+; ------------------------------------------
+
+Stage2Message db "ScratchBoot Stage2 Loaded!", 0

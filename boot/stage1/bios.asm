@@ -27,26 +27,65 @@ ScrBiosPrintChar:
     ret
 
 
-    ; ------------------------------------------------------
+; ------------------------------------------------------
 ; Function : ScrBiosReadSector
 ;
 ; Description:
-; Reads one sector from disk.
-;
-; Input:
-; (to be defined)
-;
-; Output:
-; Sector loaded into memory.
-;
-; Status:
-; TODO
+; Reads Stage2 from disk.
 ; ------------------------------------------------------
 
 ScrBiosReadSector:
 
+    pusha
+
+    xor ax, ax
+    mov es, ax
+
+    mov bx, SCR_STAGE2_LOAD_OFFSET
+
+    mov ah, 0x02
+    mov al, 0x01
+
+    mov ch, 0x00
+    mov cl, SCR_STAGE2_SECTOR
+    mov dh, 0x00
+
+    mov dl, [BootDrive]
+
+    int 0x13
+
+    popa
     ret
 
+
+; ------------------------------------------------------
+; Function : ScrBiosResetDisk
+;
+; Description:
+; Resets the disk controller using BIOS.
+;
+; Input:
+; DL = Boot drive
+;
+; Output:
+; CF = 0 success
+; CF = 1 error
+;
+; Status:
+; Stable
+; ------------------------------------------------------
+
+ScrBiosResetDisk:
+
+    pusha
+
+    mov ah, 0x00
+    mov dl, [BootDrive]
+
+    int 0x13
+
+    popa
+    ret
 
 
 

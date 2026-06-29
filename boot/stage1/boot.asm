@@ -1,20 +1,30 @@
 BITS 16
 ORG 0x7C00
 
-%include "bios.asm"
-%include "print.asm"
-%include "banner.asm"
+%include "stage1.inc"
+
+; ==========================================
+; ScratchBoot Variables
+; ==========================================
+
+BootDrive db 0
+
+; ==========================================
+; Entry Point
+; ==========================================
 
 start:
+
+    mov [BootDrive], dl
 
     cli
 
     call ScrBootBanner
 
-hang:
+.hang:
 
     hlt
-    jmp hang
+    jmp .hang
 
 times 510-($-$$) db 0
 dw 0xAA55
