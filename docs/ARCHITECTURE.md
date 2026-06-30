@@ -168,14 +168,14 @@ Planned progression:
 ```text
 Fixed-sector Stage2 loading
 ↓
-FAT12 or FAT16 for initial kernel loading
+FAT32 for initial kernel loading
 ↓
 Virtual filesystem layer
 ↓
 ScratchFS as a native ScratchOS filesystem
 ```
 
-FAT12 or FAT16 is intended only as an early bootstrap filesystem because it is simple enough for an initial bootloader implementation. ScratchFS remains a long-term native filesystem goal.
+FAT32 is intended only as an early bootstrap filesystem because it is simple enough for an initial bootloader implementation. ScratchFS remains a long-term native filesystem goal.
 
 ## Firmware Support
 
