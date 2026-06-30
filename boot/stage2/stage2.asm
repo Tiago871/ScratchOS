@@ -16,6 +16,8 @@ SCR_E820_FUNCTION          equ 0xE820
 SCR_E820_ENTRY_SIZE        equ 20
 SCR_E820_MAX_ENTRIES       equ 16
 SCR_MEMORY_MAP_BUFFER      equ 0x0500
+SCR_A20_TEST_LOW_ADDRESS   equ 0x0700
+SCR_A20_TEST_HIGH_OFFSET   equ 0x0710
 
 ; ==========================================
 ; Entry Point
@@ -46,8 +48,13 @@ Stage2Start:
 
     mov ax, [MemoryMapEntryCount]
     call ScrStage2PrintNumber
-
     mov si, NewLineMessage
+    call ScrStage2PrintString
+
+    call ScrStage2EnableA20
+    jc .a20_error
+
+    mov si, A20EnabledMessage
     call ScrStage2PrintString
 
     jmp .hang
@@ -55,6 +62,13 @@ Stage2Start:
 .memory_error:
 
     mov si, MemoryMapErrorMessage
+    call ScrStage2PrintString
+
+    jmp .hang
+
+.a20_error:
+
+    mov si, A20ErrorMessage
     call ScrStage2PrintString
 
 .hang:
@@ -150,6 +164,110 @@ ScrStage2PrintNumber:
 
     ret
 
+    ; ------------------------------------------------------
+; Function : ScrStage2EnableA20
+;
+; Description:
+; Enables the A20 line through BIOS if needed.
+;
+; Output:
+; CF = 0 A20 enabled and verified
+; CF = 1 error
+; ------------------------------------------------------
+
+ScrStage2EnableA20:
+
+    call ScrStage2IsA20Enabled
+    jnc .success
+
+    mov ax, 0x2401
+    int 0x15
+    jc .error
+
+    call ScrStage2IsA20Enabled
+    jc .error
+
+.success:
+
+    clc
+    ret
+
+.error:
+
+    stc
+    ret
+
+
+; ------------------------------------------------------
+; Function : ScrStage2IsA20Enabled
+;
+; Description:
+; Checks whether the A20 line is enabled.
+;
+; Output:
+; CF = 0 A20 enabled
+; CF = 1 A20 disabled
+; ------------------------------------------------------
+
+ScrStage2IsA20Enabled:
+
+    pushf
+    cli
+
+    push ds
+    push es
+    push si
+    push di
+    push bx
+
+    xor ax, ax
+    mov ds, ax
+    mov si, SCR_A20_TEST_LOW_ADDRESS
+
+    mov ax, 0xFFFF
+    mov es, ax
+    mov di, SCR_A20_TEST_HIGH_OFFSET
+
+    mov al, [si]
+    mov bl, [es:di]
+
+    mov byte [si], 0x00
+    mov byte [es:di], 0xFF
+
+    cmp byte [si], 0xFF
+    jne .enabled
+
+    mov ah, 1
+    jmp .restore
+
+.enabled:
+
+    xor ah, ah
+
+.restore:
+
+    mov [es:di], bl
+    mov [si], al
+
+    pop bx
+    pop di
+    pop si
+    pop es
+    pop ds
+
+    popf
+
+    test ah, ah
+    jz .success
+
+    stc
+    ret
+
+.success:
+
+    clc
+    ret
+
 ; ------------------------------------------------------
 ; Function : ScrStage2GetMemoryMap
 ;
@@ -238,6 +356,8 @@ ScrStage2GetMemoryMap:
 Stage2LoadedMessage db "ScratchBoot Stage2 Loaded!", 13, 10, 0
 MemoryMapOkMessage db "BIOS E820 entries: ", 0
 NewLineMessage     db 13, 10, 0
+A20EnabledMessage  db "A20: enabled and verified.", 13, 10, 0
+A20ErrorMessage    db "A20: could not be enabled.", 13, 10, 0
 MemoryMapErrorMessage db "BIOS E820: failed or buffer full.", 13, 10, 0
 
 MemoryMapEntryCount  dw 0
