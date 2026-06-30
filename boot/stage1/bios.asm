@@ -31,7 +31,7 @@ ScrBiosPrintChar:
 ; Function : ScrBiosReadSector
 ;
 ; Description:
-; Reads Stage2 from disk.
+; Reads Stage2 sectors from disk into memory.
 ; ------------------------------------------------------
 
 ScrBiosReadSector:
@@ -44,7 +44,7 @@ ScrBiosReadSector:
     mov bx, SCR_STAGE2_LOAD_OFFSET
 
     mov ah, 0x02
-    mov al, 0x01
+        mov al, SCR_STAGE2_SECTOR_COUNT
 
     mov ch, 0x00
     mov cl, SCR_STAGE2_SECTOR

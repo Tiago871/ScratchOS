@@ -26,11 +26,11 @@ $(STAGE1_BIN): $(STAGE1_SRC) | $(BUILD_DIR)
 
 $(STAGE2_BIN): $(STAGE2_SRC) | $(BUILD_DIR)
 	$(ASM) -I boot/stage2/ -f bin $(STAGE2_SRC) -o $(STAGE2_BIN)
-		@test $$(stat -c%s $(STAGE2_BIN)) -le 512 || (echo "ERROR: Stage2 exceeds 512 bytes; Stage1 currently loads one sector only."; exit 1)
+	@test $$(stat -c%s $(STAGE2_BIN)) -le 1024 || (echo "ERROR: Stage2 exceeds 1024 bytes; Stage1 currently loads two sectors only."; exit 1)
 
 $(IMAGE): $(STAGE1_BIN) $(STAGE2_BIN)
 	cat $(STAGE1_BIN) $(STAGE2_BIN) > $(IMAGE)
-	truncate -s 1024 $(IMAGE)
+	truncate -s 1536 $(IMAGE)
 
 run: $(IMAGE)
 	$(QEMU) -drive format=raw,file=$(IMAGE)

@@ -7,6 +7,7 @@
 
 %define SCR_BOOT_SECTOR            1
 %define SCR_STAGE2_SECTOR          2
+%define SCR_STAGE2_SECTOR_COUNT    2
 
 
 ; ==========================================
