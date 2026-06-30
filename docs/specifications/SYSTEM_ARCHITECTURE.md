@@ -1,5 +1,3 @@
-===== SYSTEM_ARCHITECTURE.md =====
-
 # ScratchOS System Architecture
 
 ## Purpose
